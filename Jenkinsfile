@@ -8,13 +8,15 @@ pipeline {
     
     environment {
         SCANNER_HOME=tool 'sonar-scanner'
+        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_TOKEN = credentials('squ_0a07f985b9c398ce5dfadafca8a3c75ba4608019')
     }
     
     stages{
         
         stage("Git Checkout"){
             steps{
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/mkhnoori/petclinic-app.g'
+                git branch: 'main', credentialsId: 'git-cred', url: 'https://github.com/mkhnoori/petclinic-app.git'
             }
         }
         
@@ -57,7 +59,7 @@ pipeline {
         stage("Docker Build & Push"){
             steps{
                 script{
-                   withDockerRegistry(credentialsId: '58be877c-9294-410e-98ee-6a959d73b352', toolName: 'docker') {
+                   withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
                         
                         sh "docker build -t image1 ."
                         sh "docker tag image1 mkhnoori1/pet-clinic123:latest "
